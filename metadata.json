@@ -1,0 +1,6 @@
+{
+  "name": "티엔이엔씨(주) - TN E&C 종합건설",
+  "description": "산업플랜트·바이오·GMP·스마트엔지니어링 전문 종합건설사 티엔이엔씨(주) 공식 홈페이지",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,535 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  Building2, ShieldCheck, Award, Zap, ChevronRight, Phone, 
+  Mail, MapPin, Printer, Menu, X, ArrowUpRight, CheckCircle2,
+  Cpu, Layers, Compass, HardHat, FileSpreadsheet
+} from 'lucide-react';
+
+export default function App() {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeFilter, setActiveFilter] = useState('all');
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 40);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // 프로젝트 데이터 (PDF 실적 기반)
+  const projects = [
+    {
+      id: 1,
+      client: "(주)삼양바이오팜",
+      title: "유전자치료제 생산공장 신축공사",
+      category: "bio",
+      categoryName: "바이오 플랜트",
+      scope: "주사제(Isolator type) / 시공",
+      image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      id: 2,
+      client: "(주)유영제약",
+      title: "진천 GMP공장 증축 및 리모델링",
+      category: "bio",
+      categoryName: "GMP 생산시설",
+      scope: "원료의약품 생산동 / 시공",
+      image: "https://images.unsplash.com/photo-1579165466791-788226ab77b6?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      id: 3,
+      client: "(사)한국동물약품협회",
+      title: "기업연구원 구축공사",
+      category: "rnd",
+      categoryName: "R&D 연구시설",
+      scope: "시험분석실 및 LAB / 설계+시공",
+      image: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      id: 4,
+      client: "(주)바이넥스",
+      title: "오송공장 5K LINE 확장공사",
+      category: "bio",
+      categoryName: "바이오 플랜트",
+      scope: "배양 및 정제시설 / 시공",
+      image: "https://images.unsplash.com/photo-1581093458791-9d58946cc9f2?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      id: 5,
+      client: "(주)옵투스제약",
+      title: "오송2공장 신축 토목·건축공사",
+      category: "bio",
+      categoryName: "점안제 특화공장",
+      scope: "토목, 건축, 기계설비 / 시공",
+      image: "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      id: 6,
+      client: "(주)유진글로벌",
+      title: "하남미사 사옥 신축공사",
+      category: "general",
+      categoryName: "일반건축",
+      scope: "근린생활 및 업무시설 / 시공",
+      image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80"
+    }
+  ];
+
+  const filteredProjects = activeFilter === 'all' 
+    ? projects 
+    : projects.filter(p => p.category === activeFilter);
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-red-600 selection:text-white">
+
+      {/* 1. HEADER */}
+      <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+        isScrolled ? 'bg-slate-950/95 shadow-xl backdrop-blur-md py-4 border-b border-slate-800' : 'bg-transparent py-6'
+      }`}>
+        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+          <a href="#home" className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-[#e30613] rounded flex items-center justify-center font-black text-xl text-white tracking-tighter">
+              N
+            </div>
+            <span className="text-2xl font-black tracking-tight text-white font-mono">TN E&C</span>
+          </a>
+
+          {/* 데스크톱 메뉴 */}
+          <nav className="hidden md:flex items-center gap-8">
+            {['HOME', 'BUSINESS', 'PROJECT', 'TECHNOLOGY', 'ABOUT', 'NEWS'].map((item) => (
+              <a 
+                key={item} 
+                href={`#${item.toLowerCase()}`}
+                className="text-sm font-semibold tracking-wider text-slate-300 hover:text-white transition-colors relative py-1 hover:after:w-full after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-[#e30613] after:transition-all"
+              >
+                {item}
+              </a>
+            ))}
+          </nav>
+
+          <div className="hidden md:flex items-center gap-4">
+            <a 
+              href="#location" 
+              className="px-5 py-2.5 rounded bg-[#e30613] hover:bg-red-700 text-white text-xs font-bold tracking-wider transition-all shadow-lg shadow-red-950 flex items-center gap-2"
+            >
+              PROJECT INQUIRY <ArrowUpRight className="w-4 h-4" />
+            </a>
+          </div>
+
+          {/* 모바일 햄버거 버튼 */}
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden text-white p-2"
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
+
+        {/* 모바일 드롭다운 메뉴 */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-slate-900 border-b border-slate-800 px-6 py-6 flex flex-col gap-4">
+            {['HOME', 'BUSINESS', 'PROJECT', 'TECHNOLOGY', 'ABOUT', 'NEWS'].map((item) => (
+              <a 
+                key={item} 
+                href={`#${item.toLowerCase()}`}
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-base font-medium text-slate-200"
+              >
+                {item}
+              </a>
+            ))}
+            <a 
+              href="#location" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="mt-2 text-center py-3 bg-[#e30613] text-white rounded font-bold text-sm"
+            >
+              문의하기
+            </a>
+          </div>
+        )}
+      </header>
+
+      {/* 2. HERO / MAIN VISUAL */}
+      <section id="home" className="relative min-h-screen flex items-center justify-center pt-24 pb-16 overflow-hidden">
+        {/* 다크 오버레이 배경 */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-slate-900/80 z-10" />
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-30" 
+          style={{ backgroundImage: `url('https://images.unsplash.com/photo-1541888946425-d0fbb1861564?auto=format&fit=crop&w=2000&q=80')` }}
+        />
+
+        <div className="relative z-20 max-w-7xl mx-auto px-6 w-full">
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/80 border border-slate-700 text-xs font-semibold text-amber-400 mb-6">
+              <Zap className="w-3.5 h-3.5" /> 첨단 바이오·GMP 플랜트 엔지니어링 파트너
+            </div>
+            
+            <h1 className="text-4xl sm:text-6xl font-black tracking-tight leading-[1.15] text-white mb-6">
+              신기술로 완성하는<br />
+              무결점 산업플랜트 <span className="text-[#e30613]">TN E&C</span>
+            </h1>
+            
+            <p className="text-lg text-slate-300 leading-relaxed mb-10 font-normal">
+              티엔이엔씨(주)는 cGMP / EU-GMP 규격의 무균 제조시설부터 3D BIM 가상 시공, 
+              직영 골조 시스템까지 통합 엔지니어링 역량을 바탕으로 타협 없는 안전과 최적의 공기를 실현합니다.
+            </p>
+
+            <div className="flex flex-wrap gap-4">
+              <a 
+                href="#projects" 
+                className="px-7 py-3.5 bg-[#e30613] hover:bg-red-700 text-white rounded font-bold text-sm transition-all flex items-center gap-2 shadow-xl shadow-red-900/30"
+              >
+                주요 프로젝트 실적 <ChevronRight className="w-4 h-4" />
+              </a>
+              <a 
+                href="#technology" 
+                className="px-7 py-3.5 bg-slate-900/80 hover:bg-slate-800 text-slate-200 border border-slate-700 rounded font-bold text-sm transition-all"
+              >
+                핵심 엔지니어링 기술
+              </a>
+            </div>
+          </div>
+
+          {/* 핵심 재무·안전 지표 카드 (PDF 7p, 9p 데이터) */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-16 pt-10 border-t border-slate-800/80">
+            <div className="bg-slate-900/50 backdrop-blur border border-slate-800 p-5 rounded-lg">
+              <div className="text-xs text-slate-400 font-semibold mb-1">나이스 기업신용평가</div>
+              <div className="text-2xl sm:text-3xl font-black text-white font-mono">BBB<span className="text-amber-400">0</span></div>
+              <p className="text-[11px] text-slate-400 mt-1">안정적 재무건전성 매년 상승</p>
+            </div>
+
+            <div className="bg-slate-900/50 backdrop-blur border border-slate-800 p-5 rounded-lg">
+              <div className="text-xs text-slate-400 font-semibold mb-1">차입금 의존도</div>
+              <div className="text-2xl sm:text-3xl font-black text-white font-mono">0<span className="text-amber-400">%</span></div>
+              <p className="text-[11px] text-slate-400 mt-1">무차입 경영 & 현금결제 100%</p>
+            </div>
+
+            <div className="bg-slate-900/50 backdrop-blur border border-slate-800 p-5 rounded-lg">
+              <div className="text-xs text-slate-400 font-semibold mb-1">건설안전보건평가</div>
+              <div className="text-2xl sm:text-3xl font-black text-white font-mono">SA<span className="text-amber-400">2</span></div>
+              <p className="text-[11px] text-slate-400 mt-1">업계 상위 2.4% 최상위 수준</p>
+            </div>
+
+            <div className="bg-slate-900/50 backdrop-blur border border-slate-800 p-5 rounded-lg">
+              <div className="text-xs text-slate-400 font-semibold mb-1">중대재해 / 사망사고</div>
+              <div className="text-2xl sm:text-3xl font-black text-white font-mono">Zero</div>
+              <p className="text-[11px] text-slate-400 mt-1">설립 이래 중대사고 0건 유지</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. PROJECTS */}
+      <section id="project" className="py-28 bg-slate-900 border-t border-slate-800">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
+            <div>
+              <span className="text-[#e30613] font-mono text-xs font-bold tracking-widest uppercase">Major References</span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-2">주요 프로젝트 실적</h2>
+            </div>
+
+            {/* 필터 탭 */}
+            <div className="flex gap-2 mt-6 md:mt-0 overflow-x-auto pb-2 md:pb-0">
+              {[
+                { id: 'all', label: '전체' },
+                { id: 'bio', label: '바이오/제약' },
+                { id: 'rnd', label: 'R&D/연구소' },
+                { id: 'general', label: '일반건축' },
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveFilter(tab.id)}
+                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
+                    activeFilter === tab.id
+                      ? 'bg-[#e30613] text-white shadow-md'
+                      : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredProjects.map((p) => (
+              <div 
+                key={p.id}
+                className="bg-slate-950 border border-slate-800/80 rounded-xl overflow-hidden hover:border-slate-700 transition-all duration-300 group hover:-translate-y-1.5 shadow-lg"
+              >
+                <div className="h-52 relative overflow-hidden">
+                  <img 
+                    src={p.image} 
+                    alt={p.title} 
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute top-4 left-4 bg-slate-900/90 backdrop-blur px-3 py-1 rounded text-[11px] font-bold text-amber-400">
+                    {p.categoryName}
+                  </div>
+                </div>
+
+                <div className="p-6">
+                  <div className="text-xs font-bold text-[#e30613] mb-1">{p.client}</div>
+                  <h3 className="text-lg font-bold text-white mb-4 line-clamp-1 group-hover:text-amber-400 transition-colors">
+                    {p.title}
+                  </h3>
+                  <div className="pt-4 border-t border-slate-800/80 text-xs text-slate-400 flex justify-between items-center">
+                    <span>{p.scope}</span>
+                    <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-white" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 4. TECHNOLOGY */}
+      <section id="technology" className="py-28 bg-slate-950 border-t border-slate-800">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <span className="text-[#e30613] font-mono text-xs font-bold tracking-widest uppercase">Core Technology</span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-2">엔지니어링 전문 기술</h2>
+            <p className="text-slate-400 text-sm mt-3">
+              설계부터 3D BIM 시뮬레이션, 공조 제어 및 토목 직영 시공까지 독보적인 원스톱 기술력을 제공합니다.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="bg-slate-900/60 border border-slate-800 p-8 rounded-xl hover:border-slate-700 transition-all">
+              <div className="w-12 h-12 bg-red-950/60 border border-red-800/40 rounded-lg flex items-center justify-center text-[#e30613] mb-6">
+                <ShieldCheck className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">GMP & HACCP 플랜트</h3>
+              <p className="text-slate-400 text-sm leading-relaxed mb-4">
+                KGMP, cGMP, EU-GMP 기준에 부합하는 무균주사제, 점안제, 고형제 라인 공조 및 클린룸 시공 기술.
+              </p>
+              <div className="text-xs text-slate-400 space-y-1.5 border-t border-slate-800 pt-4">
+                <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> 차압 흐름 최적화 공조 시스템</div>
+                <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> 아이솔레이터(Isolator) 무균 충전</div>
+              </div>
+            </div>
+
+            <div className="bg-slate-900/60 border border-slate-800 p-8 rounded-xl hover:border-slate-700 transition-all">
+              <div className="w-12 h-12 bg-red-950/60 border border-red-800/40 rounded-lg flex items-center justify-center text-[#e30613] mb-6">
+                <Cpu className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">3D BIM & VR 가상검증</h3>
+              <p className="text-slate-400 text-sm leading-relaxed mb-4">
+                시공 전 2D 도면을 3D로 전환하여 복잡한 배관·덕트의 간섭을 100% 사전 해결하고 재시공을 원천 차단.
+              </p>
+              <div className="text-xs text-slate-400 space-y-1.5 border-t border-slate-800 pt-4">
+                <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> 공종 간 간섭 충돌 사전 분석</div>
+                <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> VR 가상 시뮬레이션 기반 품질 관리</div>
+              </div>
+            </div>
+
+            <div className="bg-slate-900/60 border border-slate-800 p-8 rounded-xl hover:border-slate-700 transition-all">
+              <div className="w-12 h-12 bg-red-950/60 border border-red-800/40 rounded-lg flex items-center justify-center text-[#e30613] mb-6">
+                <Layers className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">Bio Medical & ICR</h3>
+              <p className="text-slate-400 text-sm leading-relaxed mb-4">
+                mRNA 원액, 유전자/세포치료제 등 최첨단 바이오 의약품 및 BSL-3 고위험 차폐 실험실 시공.
+              </p>
+              <div className="text-xs text-slate-400 space-y-1.5 border-t border-slate-800 pt-4">
+                <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> 특수 차폐 챔버 및 배기 시스템</div>
+                <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> 바이오 리액터 및 청정 유틸리티</div>
+              </div>
+            </div>
+
+            <div className="bg-slate-900/60 border border-slate-800 p-8 rounded-xl hover:border-slate-700 transition-all">
+              <div className="w-12 h-12 bg-red-950/60 border border-red-800/40 rounded-lg flex items-center justify-center text-[#e30613] mb-6">
+                <FileSpreadsheet className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">VE (가치공학) 데이터베이스</h3>
+              <p className="text-slate-400 text-sm leading-relaxed mb-4">
+                건축, 토목, 기계, 전기 전 분야의 수많은 공정 개선 데이터베이스를 통해 공사비 절감 및 성능 최적화.
+              </p>
+              <div className="text-xs text-slate-400 space-y-1.5 border-t border-slate-800 pt-4">
+                <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> 공종별 기술제안 사례집 보유</div>
+                <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> LCC(생애주기비용) 최소화 설계</div>
+              </div>
+            </div>
+
+            <div className="bg-slate-900/60 border border-slate-800 p-8 rounded-xl hover:border-slate-700 transition-all">
+              <div className="w-12 h-12 bg-red-950/60 border border-red-800/40 rounded-lg flex items-center justify-center text-[#e30613] mb-6">
+                <HardHat className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">토목 & 골조 직접시공 체계</h3>
+              <p className="text-slate-400 text-sm leading-relaxed mb-4">
+                외주 하도급 의존도를 낮추고 현장 여건에 따라 기초 토목 및 철근콘크리트 공사를 직접 수행하여 공기 단축.
+              </p>
+              <div className="text-xs text-slate-400 space-y-1.5 border-t border-slate-800 pt-4">
+                <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> 책임 직영 시공을 통한 하자 방지</div>
+                <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> 신속한 착공 및 통합 현장 운영</div>
+              </div>
+            </div>
+
+            <div className="bg-slate-900/60 border border-slate-800 p-8 rounded-xl hover:border-slate-700 transition-all">
+              <div className="w-12 h-12 bg-red-950/60 border border-red-800/40 rounded-lg flex items-center justify-center text-[#e30613] mb-6">
+                <Compass className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">스마트 현장 관리 시스템</h3>
+              <p className="text-slate-400 text-sm leading-relaxed mb-4">
+                드론 항공 측량, 정밀 GPS, 태블릿 PC 기반 실시간 점검 앱을 연동하여 품질 및 중대재해 제로화 실현.
+              </p>
+              <div className="text-xs text-slate-400 space-y-1.5 border-t border-slate-800 pt-4">
+                <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> 모바일 품질·안전보건 점검 앱</div>
+                <div className="flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-amber-400" /> 드론 실시간 시공 현황 공정 관리</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. NEWS */}
+      <section id="news" className="py-28 bg-slate-900 border-t border-slate-800">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex justify-between items-end mb-12">
+            <div>
+              <span className="text-[#e30613] font-mono text-xs font-bold tracking-widest uppercase">Latest Updates</span>
+              <h2 className="text-3xl font-extrabold text-white mt-2">회사 소식</h2>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-slate-950 p-6 rounded-lg border border-slate-800 flex flex-col justify-between">
+              <div>
+                <span className="text-xs font-bold text-amber-400 bg-amber-950/40 border border-amber-800/40 px-2.5 py-1 rounded">신규 수주</span>
+                <h3 className="text-base font-bold text-white mt-4 mb-2">(주)삼양바이오팜 유전자치료제 신축 수주</h3>
+                <p className="text-slate-400 text-xs leading-relaxed">
+                  아이솔레이터(Isolator) 방식의 첨단 유전자치료제 주사제 생산라인 구축 공사 시공사 선정.
+                </p>
+              </div>
+              <div className="text-[11px] text-slate-500 font-mono mt-6">2026.05.18</div>
+            </div>
+
+            <div className="bg-slate-950 p-6 rounded-lg border border-slate-800 flex flex-col justify-between">
+              <div>
+                <span className="text-xs font-bold text-blue-400 bg-blue-950/40 border border-blue-800/40 px-2.5 py-1 rounded">기업 평가</span>
+                <h3 className="text-base font-bold text-white mt-4 mb-2">나이스 신용등급 BBB0 및 안전등급 SA2 달성</h3>
+                <p className="text-slate-400 text-xs leading-relaxed">
+                  차입금 제로 및 100% 현금결제 원칙을 통한 안정적 재무구조와 안전보건 최상위 등급 평가 완료.
+                </p>
+              </div>
+              <div className="text-[11px] text-slate-500 font-mono mt-6">2026.03.10</div>
+            </div>
+
+            <div className="bg-slate-950 p-6 rounded-lg border border-slate-800 flex flex-col justify-between">
+              <div>
+                <span className="text-xs font-bold text-emerald-400 bg-emerald-950/40 border border-emerald-800/40 px-2.5 py-1 rounded">면허 취득</span>
+                <h3 className="text-base font-bold text-white mt-4 mb-2">기계설비공사업 면허 취득</h3>
+                <p className="text-slate-400 text-xs leading-relaxed">
+                  기계설비공사업 면허(광명26-파-2) 취득을 통해 플랜트 공조 및 고난도 크린룸 설비 직영 시공 역량 제고.
+                </p>
+              </div>
+              <div className="text-[11px] text-slate-500 font-mono mt-6">2026.01.20</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. LOCATION */}
+      <section id="location" className="py-28 bg-slate-950 border-t border-slate-800">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <span className="text-[#e30613] font-mono text-xs font-bold tracking-widest uppercase">Contact & Location</span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-2 mb-6">오시는 길</h2>
+              <p className="text-slate-300 text-sm leading-relaxed mb-8">
+                티엔이엔씨(주) 본사는 KTX 광명역 인근 광명역자이타워에 위치하고 있습니다. 
+                플랜트 신축 및 리모델링에 관한 전문 엔지니어링 상담을 지원합니다.
+              </p>
+
+              <div className="space-y-4">
+                <div className="flex items-start gap-4 p-4 rounded-lg bg-slate-900 border border-slate-800">
+                  <MapPin className="w-5 h-5 text-[#e30613] shrink-0 mt-0.5" />
+                  <div>
+                    <div className="text-xs font-bold text-slate-400">본사 주소</div>
+                    <div className="text-sm font-semibold text-white">경기도 광명시 새빛공원로 67 B동 906, 907호 (광명역자이타워)</div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="flex items-center gap-4 p-4 rounded-lg bg-slate-900 border border-slate-800">
+                    <Phone className="w-5 h-5 text-amber-400 shrink-0" />
+                    <div>
+                      <div className="text-xs font-bold text-slate-400">대표전화</div>
+                      <div className="text-sm font-semibold text-white">02. 6929. 2560</div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 p-4 rounded-lg bg-slate-900 border border-slate-800">
+                    <Printer className="w-5 h-5 text-slate-400 shrink-0" />
+                    <div>
+                      <div className="text-xs font-bold text-slate-400">팩스번호</div>
+                      <div className="text-sm font-semibold text-white">02. 6929. 2570</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 p-4 rounded-lg bg-slate-900 border border-slate-800">
+                  <Mail className="w-5 h-5 text-blue-400 shrink-0" />
+                  <div>
+                    <div className="text-xs font-bold text-slate-400">이메일 문의</div>
+                    <div className="text-sm font-semibold text-white">tnenc@tnenc.com</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 지도 그래픽 영역 */}
+            <div className="h-96 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/80 p-8 flex flex-col items-center justify-center text-center shadow-2xl relative overflow-hidden">
+              <div className="w-16 h-16 rounded-full bg-[#e30613] text-white flex items-center justify-center shadow-xl shadow-red-950 mb-4 animate-bounce">
+                <Building2 className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-1">티엔이엔씨(주) 본사</h3>
+              <p className="text-slate-400 text-xs mb-6">광명역자이타워 B동 906·907호 (KTX 광명역 도보 8분)</p>
+              <a 
+                href="https://map.kakao.com/link/search/광명역자이타워" 
+                target="_blank" 
+                rel="noreferrer"
+                className="px-6 py-2.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs tracking-wider transition-all flex items-center gap-2"
+              >
+                카카오맵 길찾기 <ArrowUpRight className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. FOOTER */}
+      <footer className="bg-slate-950 text-slate-400 py-16 border-t border-slate-800 text-xs">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pb-12 border-b border-slate-800/80">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-[#e30613] rounded flex items-center justify-center font-black text-lg text-white">
+                N
+              </div>
+              <span className="text-xl font-black tracking-tight text-white font-mono">TN E&C</span>
+            </div>
+            <div className="flex flex-wrap gap-6 text-slate-400 font-medium">
+              <a href="#home" className="hover:text-white transition-colors">HOME</a>
+              <a href="#technology" className="hover:text-white transition-colors">BUSINESS</a>
+              <a href="#project" className="hover:text-white transition-colors">PROJECT</a>
+              <a href="#technology" className="hover:text-white transition-colors">TECHNOLOGY</a>
+              <a href="#location" className="hover:text-white transition-colors">CONTACT</a>
+            </div>
+          </div>
+
+          <div className="pt-8 flex flex-col md:flex-row justify-between gap-4 text-slate-400">
+            <div className="space-y-1">
+              <p>상호: 티엔이엔씨 주식회사 | 대표자: 박헌우 | 사업자등록번호: 114-87-07244</p>
+              <p>주소: 경기도 광명시 새빛공원로 67 B동 906, 907호 (일직동, 광명역자이타워) | 대표전화: 02-6929-2560</p>
+            </div>
+            <div className="text-slate-400">
+              © 2026 TN E&C Co., Ltd. All rights reserved.
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
